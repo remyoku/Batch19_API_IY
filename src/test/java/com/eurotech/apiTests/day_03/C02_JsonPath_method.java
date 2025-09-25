@@ -190,19 +190,20 @@ public class C02_JsonPath_method {
         List<String> emails = jsonPath.getList("findAll{!it.education}.email");
         System.out.println("emails = " + emails);
 
-       //aynısı pathMethod da da geçerli
-        List<Integer> list_1= response.path("findAll{it.skills.contains('Java')}.id");
+        //aynısı pathMethod da da geçerli
+        List<Integer> list_1 = response.path("findAll{it.skills.contains('Java')}.id");
         System.out.println("list = " + list);
 
 
     }
+
     @Test
     public void jsonPath_Task() {
         /**
          *  TASK
          *      Given accept type is json
          *     When user sends a GET request to "/sw/api/v1/allusers/alluser"
-         *     query params pagesize=50, page=5
+         *    query params pagesize=50, page=56
          *     Then the status Code should be 200
          *     And Content type json should be "application/json; charset=UTF-8"
          *
@@ -221,5 +222,53 @@ public class C02_JsonPath_method {
          * sixth user second experience record's id should be 2609
          * sixth user id should be 3396
          */
+
+        Response response = given()
+                .accept(ContentType.JSON)
+                .queryParam("pagesize", 50)
+                .queryParam("page", 56)
+                .when()
+                .get("/sw/api/v1/allusers/alluser");
+
+        //  response.prettyPrint();
+        Assert.assertEquals(response.statusCode(), 200);
+        Assert.assertEquals(response.contentType(), "application/json; charset=UTF-8");
+
+        JsonPath jsonPath = response.jsonPath();
+
+        int findID = jsonPath.getInt("id[2]");
+        int expectedId = 3393;
+        Assert.assertEquals(findID, expectedId);
+
+        String userSkills = jsonPath.getString("[2].skills[1]");
+        String expectedSkills = "Selenium";
+
+        Assert.assertEquals(userSkills, expectedSkills);
+
+        String userEmail = jsonPath.getString("email[2]");
+        String expectedEmail = "sld@gmail.com";
+        Assert.assertEquals(userEmail, expectedEmail);
+
+        List<String> user = jsonPath.getList("name");
+
+        int userCount = user.size();
+       // System.out.println("userCount = " + userCount);
+        Assert.assertEquals(userCount,23);
+
+        String education = jsonPath.getString("[5].education[0].school");
+        String expectedEducation = "Bilkent";
+        Assert.assertEquals(education, expectedEducation);
+
+        String experienceLocation = jsonPath.getString("[5].experience[0].location");
+        String expectedLocation = "Olsonville";
+        Assert.assertEquals(experienceLocation,expectedLocation);
+
+        int experienceID = jsonPath.getInt("[5].experience[1].id");
+        int expectedExpID = 2609;
+        Assert.assertEquals(experienceID,expectedExpID);
+
+        int id = jsonPath.getInt("id[5]");
+        int expectedID = 3396;
+        Assert.assertEquals(id,expectedID);
     }
 }
