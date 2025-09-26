@@ -171,6 +171,28 @@ public class C02_JsonToJava {
          And the first book isbn should be 9781449325862
          And the 7th book publisher should be No Starch Press
          */
+        String bookStoreBaseUrl = "https://bookstore.toolsqa.com";
+        Response response = given()
+                .accept(ContentType.JSON)
+                .when()
+                .get(bookStoreBaseUrl + "/BookStore/v1/Books");
+
+        Assert.assertEquals(response.statusCode(), 200);
+        Assert.assertEquals(response.contentType(), "application/json; charset=utf-8");
+
+
+        Map<String, Object> jsonData = response.body().as(Map.class);
+
+
+        List<Map<String, Object>> books = (List<Map<String, Object>>) jsonData.get("books");
+        String isbn = (String) books.get(0).get("isbn");
+        Assert.assertEquals(isbn, "9781449325862");
+
+        String publisher = (String) books.get(6).get("publisher");
+       // System.out.println("publisher = " + publisher);
+        Assert.assertEquals(publisher, "No Starch Press");
+
+
     }
 
     @Test
@@ -185,5 +207,25 @@ public class C02_JsonToJava {
          * content type : application/json; charset=utf-8
          * assert body message and code by using de serialization json to java
          */
+        String bookStoreBaseUrl = "https://bookstore.toolsqa.com";
+
+        Response response = given()
+                .accept(ContentType.JSON)
+                .pathParam("UUID", 1)
+                .when()
+                .get(bookStoreBaseUrl + "/Account/v1/User/{UUID}");
+
+        Assert.assertEquals(response.statusCode(),401);
+        Assert.assertEquals(response.contentType(),"application/json; charset=utf-8");
+
+        Map<String, Object> jsonData = response.body().as(Map.class);
+        String code = (String) jsonData.get("code");
+        String message = (String) jsonData.get("message");
+
+        Assert.assertEquals(code, "1200");
+        Assert.assertEquals(message, "User not authorized!");
+
+
+
     }
 }

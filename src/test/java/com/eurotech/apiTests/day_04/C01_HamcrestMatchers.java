@@ -165,5 +165,26 @@ public class C01_HamcrestMatchers {
          *          Take the response headers log.
          *
          */
+        given()
+                .accept(ContentType.JSON)
+                .queryParam("pagesize",30)
+                .queryParam("page",1)
+                .when()
+                .get("/sw/api/v1/allusers/alluser")
+                .then()
+                .statusCode(200)
+                .contentType("application/json; charset=UTF-8")
+                .header("Connection","Upgrade, Keep-Alive")
+                .header("Date", Matchers.notNullValue())
+                .body("name",Matchers.hasItem("Selim Gezer"),
+                        "name",Matchers.hasItem("Jhon Nash"),
+                        "name",Matchers.hasItem("zafer"))
+                .body("job",Matchers.hasItem("QA"))
+                .body("[9].education[1].school",Matchers.equalTo("İTÜ"))
+                .body("[0].experience[2].job",Matchers.equalTo("Junior Developer"))
+                .body("[29].education[0].school",Matchers.equalTo("gazi"))
+                .body("email",Matchers.everyItem(Matchers.containsString(".com")))
+                .log().headers();
+
     }
 }
