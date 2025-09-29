@@ -30,7 +30,7 @@ public class C02_BookStore_POJO_Task {
 
         Response response = RestAssured.given()
                 .accept(ContentType.JSON)
-                .queryParam("isbn", "9781449365035")
+                .queryParam("ISBN", "9781449365035")
                 .when()
                 .get(baseUrl + "/BookStore/v1/Book");
 
